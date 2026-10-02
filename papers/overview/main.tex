@@ -517,7 +517,8 @@ the best tests use states that are not maximally entangled\cite{AGG2005}.
 \begin{table}[t]
 \centering\small
 \caption{\textbf{Status of Open Quantum Problem 27.} ``Max-ent'' refers to maximally entangled states of any local
-dimension. The positive statements concern projective measurements; the counterexamples use projective measurements.}
+dimension. The positive statements concern projective measurements; for $3\le d\le8$ optimality and uniqueness also hold
+for arbitrary POVMs (exact certificates, ref.~\citenum{repoOQP27}). The counterexamples use projective measurements.}
 \label{tab:status}
 \begin{tabular}{>{\raggedright\arraybackslash}p{5.3cm}>{\raggedright\arraybackslash}p{9.6cm}}
 \toprule
@@ -784,7 +785,7 @@ literal noise clause by two independent checkers, and the Kullback--Leibler theo
 
 \subsection*{Formal verification}
 The argument is formalised in the Lean~4 theorem prover (version 4.33.1) with its mathematical library Mathlib
-(revision 0df444a)\cite{Lean2021,Mathlib2020}, in 96 files of about 33,000 lines. No file uses \texttt{sorry},
+(revision 0df444a)\cite{Lean2021,Mathlib2020}, in 98 files of about 33,400 lines. No file uses \texttt{sorry},
 \texttt{admit}, an \texttt{axiom} declaration or \texttt{native\_decide}, and every main theorem depends only on the
 three standard axioms of Lean (\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound}). The main formal
 theorems state the following. For every $2\le d\le20$, Theorems~1 and~2 and the value of the DKZ strategy hold, with no

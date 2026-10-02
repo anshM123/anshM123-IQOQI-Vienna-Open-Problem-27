@@ -32,6 +32,7 @@ up to a local change of basis and an inert auxiliary system.**
 | [`papers/overview/main.pdf`](papers/overview/main.pdf) | the article: the problem, the result and the ideas, with figures, written for a general physics audience (21 pages) |
 | [`papers/overview/SI.pdf`](papers/overview/SI.pdf) | Supplementary Information to the article (21 pages) |
 | [`papers/math/main.pdf`](papers/math/main.pdf) | the complete mathematical paper with all proofs (51 pages) |
+| [`papers/arxiv/main.pdf`](papers/arxiv/main.pdf) | the arXiv preprint: a self-contained account of the complete resolution, with the proofs of the new clauses (22 pages; upload source `papers/arxiv/arxiv_source.zip`) |
 
 ## Main results
 
@@ -66,11 +67,14 @@ For the literal noise clause, the effect behind the counterexample was observed 
 PRA 65, 052325 (2002), eq. (14), and numerically Baek, Ryu and Lee, New J. Phys. 27, 053001 (2025). As far as we found,
 the exact theorem for every d ≥ 4 and its connection to Problem 27 are new.
 
-Questions that go beyond the problem as posed remain open, and we do not claim them: optimality for general POVMs; noise
+Questions that go beyond the problem as posed remain open, and we do not claim them: optimality for general POVMs when
+d >= 9 (for d = 3, ..., 8 it is proved, with uniqueness, by exact certificates in `complete-resolution/povm/`); noise
 resistance against all Bell inequalities with white noise on the state (DKZ is optimal in all our numerical searches up to
 d = 8, and d = 3 is proved); and the CGLMP maximum over all states for d ≥ 9 (exact for d ≤ 8).
 
-Scope of Theorems 1 and 2: projective measurements (PVMs), as in the problem's "observables". General POVMs are not covered.
+Scope of Theorems 1 and 2: projective measurements (PVMs), as in the problem's "observables". For d = 3, ..., 8 the
+same holds for arbitrary POVMs, in every local dimension ([`complete-resolution/povm/`](complete-resolution/povm/)); for
+d >= 9 general POVMs are not covered.
 
 ## How the proof fits together
 
@@ -152,6 +156,7 @@ are kept next to the proofs:
 |---|---|
 | `papers/overview/` | the article (`main.pdf`), its Supplementary Information (`SI.pdf`), LaTeX sources, figure scripts |
 | `papers/math/` | the mathematical paper (`main.pdf`) and its LaTeX source |
+| `papers/arxiv/` | the arXiv preprint (`main.pdf`), its LaTeX source, the upload archive and the arXiv metadata |
 | `complete-resolution/` | the clause-by-clause ledger (`LEDGER.md`) and the theorems settling the noise and Kullback–Leibler clauses, with verifiers, certificates and independent verification reports |
 | `lean/` | the Lean 4 formalisation (`OQP27/*.lean`, `CGLMPRigidity/*.lean`), `check.sh`, axiom audits, build logs, module reports |
 | `cone-certificates/` | CONE_d certificates, interval-arithmetic checkers, audits, logs, and the write-ups `CONE_PROOF.md`, `CONE_ALLD_PROOF.md`, `RIGOR_GAUSS.md`, `RIGOR_ALLD.md` |

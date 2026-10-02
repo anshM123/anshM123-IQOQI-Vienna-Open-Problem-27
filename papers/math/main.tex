@@ -306,7 +306,8 @@ Related: maximal value of $I_d$ over all states & exact for $d=3,\dots,8$ & Ioan
 \bottomrule
 \end{tabular}
 \caption{The clauses of Open Quantum Problem~27 as originally posed~\cite{OQP}, and their status. ``Projective'' means
-that POVMs are not covered; the counterexamples use projective measurements.}\label{tab:status}
+that POVMs are not covered by Theorems~\ref{thm:A} and~\ref{thm:B}; for $3\le d\le8$ optimality and uniqueness also hold for
+arbitrary POVMs (Section~\ref{sec:open}, item~(1)). The counterexamples use projective measurements.}\label{tab:status}
 \end{table}
 
 \subsection{Strategy of the proof}\label{subsec:strategy}
@@ -2269,8 +2270,12 @@ $d$, are new.
 %======================================================================
 
 (1) \emph{POVMs.} Theorems~\ref{thm:A} and~\ref{thm:B} concern projective measurements; the reduction of
-Section~\ref{sec:reduction} uses projections in an essential way. The numerical evidence of~\cite{LVN} for $d=3$
-suggests that POVMs do not increase the maximum. (2) \emph{All states.} The maximal value of $I_d$ over all states is
+Section~\ref{sec:reduction} uses projections in an essential way. For $3\le d\le8$ POVMs do not increase the maximum,
+on maximally entangled states of every local dimension, and every optimal POVM strategy is projective, hence DKZ by
+Theorem~\ref{thm:B}: we verified this with exact sum-of-squares certificates over $\mathbb Q(\zeta_{4d})$ in the tracial
+moment relaxation with POVM constraints only (level $1{+}AB$ with doubly-localizing constraints), checked
+independently (repository folder \texttt{complete-resolution/povm/}~\cite{repo-oqp27}). For $d\ge9$ the question is
+open; the numerical evidence of~\cite{LVN} for $d=3$ pointed the same way. (2) \emph{All states.} The maximal value of $I_d$ over all states is
 known exactly only for $d\le8$ (\cite{IR,repo-cglmp}). (3) \emph{Robustness of rigidity.} The deficit identity of
 Remark~\ref{rem:deficit} suggests a quantitative version of Theorem~\ref{thm:B}; it would require a lower bound for the
 defect in Theorem~\ref{thm:C} in terms of $\|[B,g]\|_F^2$. (4) \emph{An analytic proof of Theorem~\ref{thm:E}.} The
@@ -2404,7 +2409,7 @@ Mathlib~\cite{Mathlib}, in the versions
 \begin{center}
 \small Lean 4.33.1,\qquad Mathlib revision \texttt{0df444a360eaa60ab8c11dca51a86af692955474},
 \end{center}
-in $96$ files of about $33{,}000$ lines (directory \texttt{lean/} of~\cite{repo-oqp27}). No file uses \texttt{sorry},
+in $98$ files of about $33{,}400$ lines (directory \texttt{lean/} of~\cite{repo-oqp27}). No file uses \texttt{sorry},
 \texttt{admit}, an \texttt{axiom} declaration or \texttt{native\_decide}, and \texttt{\#print axioms} reports, for every
 main theorem, only the three standard axioms \texttt{propext}, \texttt{Classical.choice} and \texttt{Quot.sound}.
 Table~\ref{tab:lean} lists the main theorems (file \texttt{Main.lean} and the files it imports, and the file

@@ -48,7 +48,7 @@ much the behaviour can be mixed with "completely random, uniform outcomes" while
 
 | Strengthening | Status |
 |---|---|
-| 27B(i) for arbitrary POVMs on maximally entangled states | OPEN in general (no POVM advantage found numerically) |
+| 27B(i) for arbitrary POVMs on maximally entangled states | **PROVED for d = 3..8** (every local dimension; optimal POVMs are projective, hence DKZ up to local unitaries): exact sum-of-squares certificates in a POVM-only relaxation, independently verified, `povm/`; OPEN for d >= 9 |
 | Noise resistance against all Bell inequalities with white noise on the state (every outcome used) | NUMERICAL: DKZ optimal in all global searches for d <= 8; d = 3 proved; OPEN in general |
 | Maximum of CGLMP over all states (Tsirelson bound) equals 2(lambda_max(K_d) - 1)/(d - 1), K_d = [sec(pi(k-l)/2d)] | exact for d <= 8 (d = 3, 4 Ioannou-Rosset; d = 5..8 our earlier certificates); OPEN for d >= 9 |
 
