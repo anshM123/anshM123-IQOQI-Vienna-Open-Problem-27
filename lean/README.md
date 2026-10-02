@@ -1,7 +1,7 @@
 # Lean 4 formalisation of OQP 27B (maximally entangled clause, every d)
 
 This folder is a Lean 4 project (Lean v4.33.1, Mathlib `0df444a360eaa60ab8c11dca51a86af692955474`). It contains a formal
-statement of the maximally entangled clause of OQP 27B and a formal proof of it: 96 files in `OQP27/` (33,256 lines), plus
+statement of the maximally entangled clause of OQP 27B and a formal proof of it: 98 files in `OQP27/` (33,419 lines), plus
 three files of algebraic rigidity in `CGLMPRigidity/` (898 lines, from our earlier repository
 [CGLMP](https://github.com/anshM123/CGLMP)).
 
@@ -20,9 +20,11 @@ three files of algebraic rigidity in `CGLMPRigidity/` (898 lines, from our earli
 | `OQP27.coneCertPos_le_twenty` | CONE_d for 2 ≤ d ≤ 20, from explicit certificates evaluated by the Lean kernel | **none** |
 | `OQP27.ConeCertificate.fullCheck_sound` (`CertPipeline.lean`) | soundness of the certificate checker: a certificate that passes the check proves CONE_d | **none** |
 | `OQP27.dkz_cglmp` | the DKZ strategy attains I_ME(d), for every d | **none** |
+| `OQP27.cglmpOf_noisy`, `OQP27.noisy_violation_iff` (`CglmpNoise.lean`) | uniform noise at visibility v multiplies the CGLMP value by v; a strategy's CGLMP noise threshold is 2/I_d | **none** |
+| `OQP27.noisy_violation_imp_le_twenty`, `OQP27.noisy_violation_imp` | no strategy has a lower CGLMP noise threshold than DKZ (2/I_ME(d)) | none for d <= 20; `Hyp_ConeCertPos_large` for d >= 21 |
 
 `#print axioms` of each of these gives `[propext, Classical.choice, Quot.sound]`, Lean's three standard axioms
-(`OQP27/logs/fullbuild/MainAxioms.log`; in total 257 theorems are audited in the seven `*Axioms.lean` files, all with
+(`OQP27/logs/fullbuild/MainAxioms.log`; in total 265 theorems are audited in the eight `*Axioms.lean` files, all with
 this result). The code of every
 file is free of `sorry`, `admit`, `axiom`, `native_decide`, `implemented_by`, `extern`, `unsafe` and `opaque`
 (`python scan_forbidden.py`). The certificates are checked with `decide +kernel`, so the Lean kernel itself evaluates them
@@ -105,17 +107,19 @@ lake exe cache get    # prebuilt Mathlib for the pinned revision
 bash check.sh         # every file, in dependency order, then the forbidden-token scan and the axiom audit
 ```
 
-`check.sh` checks the three `CGLMPRigidity` files and then the 96 files of `OQP27/BUILD_ORDER.txt`, one Lean process at a
-time, and ends with `OK: all 257 audited theorems (files *Axioms.lean) use only propext, Classical.choice, Quot.sound`.
+`check.sh` checks the three `CGLMPRigidity` files and then the 98 files of `OQP27/BUILD_ORDER.txt`, one Lean process at a
+time, and ends with `OK: all 265 audited theorems (files *Axioms.lean) use only propext, Classical.choice, Quot.sound`.
 It takes about two hours on a laptop (our clean rebuild: 1.7 hours of Lean time); the certificate files `CertD18`–`CertD20`
 need up to about 8 GB of memory each, and `CertLP` about 45 minutes. `lake build` also works, but it runs files in parallel
 and therefore needs more memory.
 
 ## Logs
 
-- `OQP27/logs/fullbuild/`: a clean rebuild of all 96 files in dependency order on 2026-10-02 (`SUMMARY.log` lists the exit
-  code and time of every file; the first attempt at `CertD20` ran out of memory while other programs were running, and the
-  rebuild was resumed from `CertD20` with nothing else running).
+- `OQP27/logs/fullbuild/`: a clean rebuild of the first 96 files in dependency order on 2026-10-02. `SUMMARY.log` lists
+  the exit code and time of every file; the first attempt at `CertD20` ran out of memory while other programs were
+  running, and the rebuild was resumed from `CertD20` with nothing else running.
+- The two files added afterwards, `CglmpNoise.lean` and `CglmpNoiseAxioms.lean`, were built on top of that rebuild
+  (`OQP27/logs/CglmpNoise.log`, `OQP27/logs/CglmpNoiseAxioms.log`).
 - `OQP27/logs/<File>.log`: the build logs of each file from development; `OQP27/logs/*Axioms.log`, `L1_axioms.log`,
   `L5_axioms.log`: the axiom audits.
 - `OQP27/logs/*.py`: independent numerical checks of the Lean definitions (not part of any proof).

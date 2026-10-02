@@ -110,5 +110,7 @@ globs = [
   "OQP27.StripLaplace",
   "OQP27.StripAxiomsL3a",
   "OQP27.StripRIChain",
-  "OQP27.StripAxiomsL3b"
+  "OQP27.StripAxiomsL3b",
+  "OQP27.CglmpNoise",
+  "OQP27.CglmpNoiseAxioms"
 ]

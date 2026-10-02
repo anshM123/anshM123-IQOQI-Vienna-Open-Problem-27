@@ -50,5 +50,5 @@ n=$(cat logs_check/OQP27_*Axioms.log | grep -c "depends on axioms")
 bad=$(cat logs_check/OQP27_*Axioms.log | grep "depends on axioms" | sed -e 's/^.*depends on axioms: \[//' -e 's/\].*$//' \
       | tr ',' '\n' | tr -d ' \r' | grep -v -x -E 'propext|Classical[.]choice|Quot[.]sound' | sort -u)
 if [ -n "$bad" ]; then echo "UNEXPECTED AXIOMS: $bad"; exit 1; fi
-if [ "$n" -lt 250 ]; then echo "TOO FEW AUDITED THEOREMS: $n (expected 257)"; exit 1; fi
+if [ "$n" -lt 250 ]; then echo "TOO FEW AUDITED THEOREMS: $n (expected 265)"; exit 1; fi
 echo "OK: all $n audited theorems (files *Axioms.lean) use only propext, Classical.choice, Quot.sound"

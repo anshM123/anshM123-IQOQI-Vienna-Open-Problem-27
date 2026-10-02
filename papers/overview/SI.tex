@@ -32,6 +32,13 @@
 \newcommand{\IME}{I_{\mathrm{ME}}}
 \newcommand{\FD}{F_{\mathrm{DKZ}}}
 \newcommand{\cD}{\mathcal{D}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\vc}{v_{\mathrm c}}
+\newcommand{\veven}{v_{\mathrm{even}}}
+\newcommand{\vodd}{v_{\mathrm{odd}}}
+\newcommand{\CH}{\mathrm{CH}}
+\newcommand{\DKZ}{\mathrm{DKZ}}
 \renewcommand{\Re}{\operatorname{Re}}
 \renewcommand{\Im}{\operatorname{Im}}
 \setlength{\emergencystretch}{3em}
@@ -58,9 +65,10 @@ This Supplementary Information contains the complete proofs of the two analytic 
 (Theorem~3, the strip inequality for matrices of every size, and Theorem~4, the two-variable
 Bessis--Moussa--Villani formula with an explicit positive density), an outline of a second, distribution-free proof of
 both, precise statements and proofs of the continuum theorem and of the cell-embedding inequalities, a description of
-the computer-assisted certificate CONE$_d$ in its three regimes, the proof of the rigidity theorem, the main theorems
-of the Lean~4 formalisation, and the independent verifications and checks. Theorem numbers 1--4 refer to the
-article.
+the computer-assisted certificate CONE$_d$ in its three regimes, the proof of the rigidity theorem, the theorems on the
+two remaining clauses of Part~B of Open Quantum Problem~27 (noise resistance and Kullback--Leibler discrimination) with
+their proofs, the main theorems of the Lean~4 formalisation, and the independent verifications and checks. Theorem
+numbers 1--4 refer to the article.
 \end{abstract}
 
 \maketitle
@@ -99,6 +107,9 @@ the Lean kernel. For $d\ge21$ it is complete except for the single input (K), wh
 interval-arithmetic certificates of
 Section~\ref{sec:cone}, outside Lean. Theorems~3 and~4 are formalised in full. Thus Theorems~1 and~2 are proved for
 every $d$, with a computer-assisted step (interval arithmetic) for $d\ge21$, and fully formalised for $d\le20$.
+
+Section~\ref{sec:clauses} treats the two remaining clauses of Part~B of Problem~27. It uses Theorems~1 and~2 only for
+the CGLMP reading of the noise clause and for $d=3$; the other results there are independent of the chain above.
 
 %==================================================================================================
 \section{The CGLMP expression, the clock model and the circle configuration}\label{sec:reduction}
@@ -810,6 +821,262 @@ of strategies on $\Phi_D$ shows that the maximum is attained and hence is strict
 \hfill$\square$
 
 %==================================================================================================
+\section{The noise and Kullback--Leibler clauses}\label{sec:clauses}
+%==================================================================================================
+
+Part~B of Problem~27 also asks to show that the DKZ measurements realise the highest resistance of the violation to
+noise, and the best discrimination against local realism in the sense of the Kullback--Leibler divergence\cite{vDGG}.
+This section gives the statements and proofs (sketches for the Kullback--Leibler clause). The settings are
+$x,y\in\{1,2\}$ and the outcomes $a,b\in\Z_d$, as in the CGLMP expression of Section~\ref{sec:reduction}, and $\DKZ_d$
+denotes the DKZ strategy on $\Phi_d$, with the bases $|k\rangle_{A,x}=d^{-1/2}\sum_je^{-2\pi ij(k+\alpha_x)/d}|j\rangle$
+and $|l\rangle_{B,y}=d^{-1/2}\sum_je^{2\pi ij(l-\beta_y)/d}|j\rangle$, $\alpha=(0,\frac12)$, $\beta=(\frac14,-\frac14)$.
+Certificates, verification programs and the reports of the independent verifications are in the directory
+\texttt{complete-resolution/} of the repository\cite{repoOQP}; its file \texttt{LEDGER.md} records the wording of the
+problem\cite{OQP} and the verdict on every clause.
+
+\subsection{Critical visibilities}
+A behaviour is a family $p=(p(\cdot,\cdot|x,y))_{x,y}$ of probability distributions on $\Z_d\times\Z_d$. The local
+polytope $\cL_d$ is the convex hull of the deterministic behaviours $\delta_\lambda(a,b|x,y)=[a=a_x][b=b_y]$,
+$\lambda=(a_1,a_2,b_1,b_2)\in\Z_d^4$. Let $p_0(a,b|x,y)=d^{-2}$ (uniformly random outcomes), $p_v=vp+(1-v)p_0$ and
+$\vc(p)=\max\{v\in[0,1]:p_v\in\cL_d\}$; $p_v$ is local exactly for $v\le\vc(p)$, and a smaller $\vc$ means a higher
+resistance to noise. Relabellings of outcomes, settings and parties do not change $\vc$. Gill measures noise resistance
+by mixing with ``completely random, uniform outcomes''\cite{Gill} as long as local realism is violated, that is, by
+$\vc$. The noise clause has three readings: (a) noise $p_0$, nonlocality detected by the CGLMP inequality; (b) Gill's
+literal reading, noise $p_0$ and nonlocality against all Bell inequalities, that is, $\vc$; (c) white noise on the
+state, $v|\Phi_D\rangle\langle\Phi_D|+(1-v)\one/D^2$, against all Bell inequalities. In~(c) the noise contributes
+$\Tr P^x_a\Tr Q^y_b/D^2$, which equals $p_0$ when all outcomes have trace $D/d$, for example for rank-one measurements
+on $\Phi_d$.
+
+\begin{proposition}[CGLMP reading]\label{prop:cglmpnoise}
+Let $p$ be the behaviour of a projective strategy on $\Phi_D$. Then $I_d(p_v)=vI_d(p)$, so $p_v$ violates the CGLMP
+inequality if and only if $v>2/I_d(p)$, and $2/I_d(p)\ge2/\IME(d)$, with equality if and only if the strategy is
+$\DKZ_d\otimes\one$ up to a local unitary $u\otimes\bar u$.
+\end{proposition}
+
+\begin{proof}
+$I_d$ is linear, and $I_d(p_0)=0$ because every probability in the CGLMP expression equals $1/d$ under $p_0$. Apply
+Theorems~1 and~2.
+\end{proof}
+
+This is formalised in the file \texttt{lean/OQP27/CglmpNoise.lean} (Section~\ref{sec:lean}), with the assumptions of
+Theorems~1 and~2: none for $2\le d\le20$, and CONE$_d$ for $d\ge21$.
+
+\subsection{Gill's literal reading}\label{subsec:literal}
+Let $\mathsf A_1=\sigma_z$, $\mathsf A_2=\sigma_x$, $\mathsf B_1=(\sigma_z+\sigma_x)/\sqrt2$,
+$\mathsf B_2=(\sigma_z-\sigma_x)/\sqrt2$ be the optimal CHSH observables, $\Pi^x_\pm=\frac12(\one\pm\mathsf A_x)$ and
+$\Pi'^y_\pm=\frac12(\one\pm\mathsf B_y)$. For $d\ge3$ the strategy $C_d$ on $\Phi_d$ is defined as follows. For even $d$,
+write $\Phi_d=\Phi_2\otimes\Phi_{d/2}$ (by $|i\rangle|j\rangle\mapsto|i\frac d2+j\rangle$) and let
+$P^x_0=\Pi^x_+\otimes\one$, $P^x_1=\Pi^x_-\otimes\one$, $Q^y_0=\Pi'^y_+\otimes\one$, $Q^y_1=\Pi'^y_-\otimes\one$. For odd
+$d$, write $\C^d=\bigoplus_{k=1}^{(d-1)/2}\operatorname{span}\{|2k-2\rangle,|2k-1\rangle\}\oplus\C|d-1\rangle$ and let
+$P^x_0=(\bigoplus_k\Pi^x_+)\oplus1$, $P^x_1=(\bigoplus_k\Pi^x_-)\oplus0$, and $Q^y_0,Q^y_1$ likewise. In both cases the
+outcomes $2,\dots,d-1$ have zero projections. Let
+\[
+\veven(d)=\frac{4(d-1)}{(\sqrt2-1)d^2+4(d-1)},\qquad\vodd(d)=\frac4{(\sqrt2-1)d+4}.
+\]
+
+\begin{theorem}[computer-assisted for $4\le d\le9$]\label{thm:literal}
+(1) For every $d\ge3$, $\vc(C_d)=\veven(d)$ for even $d$ and $\vc(C_d)=\vodd(d)$ for odd $d$. (2) For every $d\ge2$,
+$\frac12\le\vc(\DKZ_d)\le2/\IME(d)$, and $\vc(\DKZ_d)\ge0.69,\,0.687,\,0.684,\,0.683,\,0.682,\,0.681$ for $d=4,\dots,9$.
+(3) For every $d\ge4$, $\vc(C_d)<\vc(\DKZ_d)$: on $\Phi_d$, and on every $\Phi_{kd}$, the DKZ measurements do not
+realise the highest resistance of the violation of local realism to uniform outcome noise.
+\end{theorem}
+
+\begin{lemma}\label{lem:Cbeh}
+Let $s_{xy}=-1$ for $x=y=2$ and $s_{xy}=1$ otherwise, $\CH(a,b|x,y)=\frac14(1+(-1)^{a+b}s_{xy}/\sqrt2)$ for
+$a,b\in\{0,1\}$ and $0$ otherwise, and $\delta_{00}(a,b|x,y)=[a=b=0]$. The behaviour of $C_d$ is $\CH$ for even $d$ and
+$\frac{d-1}d\CH+\frac1d\delta_{00}$ for odd $d$.
+\end{lemma}
+
+\begin{proof}
+The projections are real symmetric, so the behaviour is $\Tr(P^x_aQ^y_b)/d$. For $e,f\in\{\pm1\}$,
+\[
+\tfrac12\Tr\Bigl(\frac{\one+e\mathsf A_x}2\cdot\frac{\one+f\mathsf B_y}2\Bigr)=\tfrac14\bigl(1+\tfrac{ef}2\Tr(\mathsf A_x\mathsf B_y)\bigr),
+\qquad\tfrac12\Tr(\mathsf A_x\mathsf B_y)=s_{xy}/\sqrt2 .
+\]
+For odd $d$ each of the $(d-1)/2$ blocks contributes $\Tr(\Pi\Pi')/d$, and the last dimension contributes $[a=b=0]/d$.
+\end{proof}
+
+Let $\varsigma(0)=1$, $\varsigma(a)=-1$ for $a\ne0$, $E_{xy}(p)=\sum_{a,b}\varsigma(a)\varsigma(b)p(a,b|x,y)$ and
+$\mathcal E=E_{11}+E_{12}+E_{21}-E_{22}$ (CHSH after coarse-graining every measurement into $\{0\}$ and the rest).
+
+\begin{lemma}\label{lem:witness}
+$\mathcal E\le2$ on $\cL_d$, $\mathcal E(p_0)=2(d-2)^2/d^2$, $\mathcal E(\CH)=2\sqrt2$, $\mathcal E(\delta_{00})=2$.
+Hence the behaviour $p_v$ of $C_d$ violates $\mathcal E\le2$ if and only if $v>\veven(d)$ (even $d$), respectively
+$v>\vodd(d)$ (odd $d$).
+\end{lemma}
+
+\begin{proof}
+On $\delta_\lambda$, $\mathcal E=\varsigma(a_1)(\varsigma(b_1)+\varsigma(b_2))+\varsigma(a_2)(\varsigma(b_1)-\varsigma(b_2))=\pm2$.
+Under $p_0$ the coarse-grained outcomes are independent with mean $(2-d)/d$. The threshold is
+$(2-\mathcal E(p_0))/(\mathcal E(p)-\mathcal E(p_0))$, with $2-\mathcal E(p_0)=8(d-1)/d^2$ and
+$\mathcal E(p)-\mathcal E(p_0)=(2\sqrt2d^2-2(d-2)^2)/d^2$, respectively $2(d-1)((\sqrt2-1)d+4)/d^2$.
+\end{proof}
+
+\begin{proposition}[a local model at the threshold]\label{prop:flagmodel}
+Let $d\ge3$, $s=1/d$ and $T=4s(1-s)/(\sqrt2-(1-2s)^2)=\veven(d)$. Then $T\CH+(1-T)p_0$ is local.
+\end{proposition}
+
+\begin{proof}
+Let $c_1=(1-T)(1-2s)$, $c_2=(1-T)(1-2s)^2$ and $c_0=1-4c_1+3c_2=4s[(1-s)-(\sqrt2-1)(1-3s)]/(\sqrt2-(1-2s)^2)>0$; also
+$c_1-c_2=2s(1-T)(1-2s)\ge0$. Let $\Lambda\in\{0,1,\ast\}^4$ (entries for $A_1,A_2,B_1,B_2$) be $(\ast,\ast,\ast,\ast)$ with
+probability $c_2$; each of $(\ast,r,r,1-r)$, $(r,\ast,r,r)$, $(r,1-r,\ast,r)$, $(r,r,r,\ast)$, $r\in\{0,1\}$, with
+probability $\frac12(c_1-c_2)$; and each of the eight $\lambda\in\{0,1\}^4$ with
+$\sum_{x,y}s_{xy}(-1)^{\lambda_{A_x}+\lambda_{B_y}}=2$ with probability $\frac18c_0$. Each party outputs its entry if it is
+$0$ or $1$, and an independent uniformly random element of $\{2,\dots,d-1\}$ if it is $\ast$. Entries with $a$ or
+$b\ge2$ come only from the first two families and equal $(1-T)/d^2$. For $a,b\in\{0,1\}$ the patterns of the second
+family with $\ast$ elsewhere are aligned with $s_{xy}$, and six of the eight strategies of the third family are aligned
+on each pair of settings, so $q(a,b|x,y)=\frac14(1-2c_1+c_2)+\frac18(-1)^{a+b}s_{xy}(1-c_2)$. This equals
+$T\CH(a,b|x,y)+(1-T)d^{-2}$, because $1-2c_1+c_2=T+4(1-T)s^2$ and $1-c_2=\sqrt2T$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:literal}(1)]
+The upper bounds are Lemmas~\ref{lem:Cbeh} and~\ref{lem:witness}. Equality for even $d$ is
+Proposition~\ref{prop:flagmodel}. For odd $d$,
+$vp_{C_d}+(1-v)p_0=vs\,\delta_{00}+(1-vs)(v'\CH+(1-v')p_0)$ with $v'=v(1-s)/(1-vs)$, and $v'=T$ at $v=\vodd(d)$.
+\end{proof}
+
+\begin{lemma}[the $\frac12$-lemma]\label{lem:half}
+If all marginals of $p$ are uniform, then $p_v$ is local for $v\le\frac12$. The constant is optimal: the behaviour
+$\mathrm{PR}_d(a,b|x,y)=\frac1d[\,b-a\equiv[x=2][y=1]\,]$, a $d$-outcome version of the box of Popescu and
+Rohrlich\cite{PR}, has $I_d(\mathrm{PR}_d)=4$ and $\vc(\mathrm{PR}_d)=\frac12$.
+\end{lemma}
+
+\begin{proof}
+The distributions
+\[
+P_1(a_1,a_2,b_1,b_2)=p(a_1,b_1|1,1)\,p(a_2,b_2|2,2),\qquad P_2(a_1,a_2,b_1,b_2)=p(a_1,b_2|1,2)\,p(a_2,b_1|2,1)
+\]
+are local models; on the other two pairs of settings they give independent uniform outcomes. So $\frac12(P_1+P_2)$
+models $\frac12(p+p_0)$, and $p_v=2v\cdot\frac12(p+p_0)+(1-2v)p_0$.
+\end{proof}
+
+The DKZ behaviour is $p_{\DKZ}(a,b|x,y)=\frac1dh_{xy}(b-a)$ with
+$h_{xy}(m)=1/(2d^2\sin^2(\pi(m-\delta_{xy})/d))$, $\delta_{xy}=\alpha_x+\beta_y$ (so $\delta_{11}=\delta_{22}=\frac14$,
+$\delta_{12}=-\frac14$, $\delta_{21}=\frac34$); its marginals are uniform, so $\vc(\DKZ_d)\ge\frac12$.
+
+\begin{lemma}[covariant local models and absorption]\label{lem:absorb}
+(i) If $\mu$ is a probability distribution on $M_d=\{m\in\Z_d^{\{1,2\}^2}:m_{11}-m_{12}-m_{21}+m_{22}\equiv0\}$ with
+marginals $\mu_{xy}$, then $\frac1d\mu_{xy}(b-a)$ is local. (ii) Let $p$ and a local $Q$ have uniform marginals and
+$0<v_0<v_1\le1$. If $|Q-p_{v_1}|\le(v_1-v_0)/(2d^2v_0)$ entrywise, then $p_{v_0}$ is local.
+\end{lemma}
+
+\begin{proof}
+(i) With $m\sim\mu$ and an independent uniform $c$, output $A_1=c$, $A_2=c+m_{11}-m_{21}$, $B_1=c+m_{11}$,
+$B_2=c+m_{12}$; then $B_y-A_x=m_{xy}$. (ii) With $E=p_{v_1}-Q$ and $\gamma=v_0/(v_1-v_0)$,
+$p_{v_0}=\frac{v_0}{v_1}Q+(1-\frac{v_0}{v_1})\cdot\frac12(p_0+S)$, where $S=p_0+2\gamma E\ge0$ has uniform marginals, so
+Lemma~\ref{lem:half} applies.
+\end{proof}
+
+\begin{proposition}[computer-assisted]\label{prop:dkzcert}
+For $3\le d\le20$ there are rationals $v_0<v_1$ and a distribution $\mu$ on $M_d$ with rational weights (denominator
+$10^{16}$) such that $|\mu_{xy}(m)-v_1h_{xy}(m)-(1-v_1)/d|\le(v_1-v_0)/(2dv_0)$. Hence $\vc(\DKZ_d)\ge v_0(d)$, with
+$2/\IME(d)-1.02\cdot10^{-7}<v_0(d)$; in particular the bounds of Theorem~\ref{thm:literal}(2) hold.
+\end{proposition}
+
+\begin{proof}
+The weights are checked in integer arithmetic. The values $h_{xy}(m)$ are enclosed in rational intervals: $\pi$ by
+partial sums of Machin's formula (width below $10^{-50}$), and $\sin$ by consecutive partial sums of its Taylor series
+on $[0,2]$, after reduction to $\sin(\pi r)$ with $r\in[0,\frac12]$; the condition is then decided exactly, with margins
+about $10^{-13}$ against enclosure widths about $10^{-15}$. The distributions were found by a floating-point linear
+program\cite{HiGHS} and rounded; this plays no role in the check. Program \texttt{dkz\_cert.py} and the certificates are
+in \texttt{complete-resolution/noise-literal/}.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:literal}(2) and (3)]
+The upper bound follows from $I_d(p_{\DKZ})=\IME(d)$ and $I_d(p_0)=0$. For $d\ge10$, $\vc(C_d)<\frac12$: for even $d$
+this is $(\sqrt2-1)d^2-4d+4>0$, true for all $d\ge9$; for odd $d$ it is $d>4(\sqrt2+1)=9.657\ldots$. For $4\le d\le9$,
+exact comparison in $\Q(\sqrt2)$ gives $\vc(C_d)=0.6442,\ 0.6589,\ 0.5729,\ 0.5798,\ 0.5137,\ 0.5176<r(d)$. On
+$\Phi_{kd}$ use $C_d\otimes\one_k$ and $\DKZ_d\otimes\one_k$.
+\end{proof}
+
+\begin{proposition}[$d=2,3$]\label{prop:small}
+(1) For $d=2$ every quantum behaviour has $\vc\ge1/\sqrt2=\vc(\DKZ_2)$ (positivity and the CHSH inequalities describe
+$\cL_2$\cite{Fine}, CHSH vanishes on $p_0$, and Tsirelson's bound\cite{Tsirelson} holds). (2) (Computer-assisted.) Every
+projective strategy on $\Phi_3$ has $\vc\ge2/\IME(3)=3\sqrt3-\frac92=0.696152\ldots$, with equality only for $\DKZ_3$ up
+to relabellings and $u\otimes\bar u$. (3) On $\Phi_2$, the measurements $\{\Pi^x_+,\Pi^x_-,0\}$, $\{\Pi'^y_+,\Pi'^y_-,0\}$
+give $\vc=8/(9\sqrt2-1)=0.682132\ldots<\vc(\DKZ_3)$; the same holds on every $\Phi_D$ with $D$ even, in particular on
+$\Phi_6$, which also carries $\DKZ_3\otimes\one_2$.
+\end{proposition}
+
+\begin{proof}[Sketch of proof of (2) and (3)]
+$\cL_3$ has exactly $1116$ facets: $36$ positivity facets, $648$ lifted CHSH facets and $432$ relabelled CGLMP
+facets\cite{CollinsGisin} (recomputed by an exact double description). The CGLMP facets are handled by Theorems~1
+and~2 (relabellings map projective strategies on $\Phi_3$ to such strategies and fix $p_0$). For a lifted CHSH facet,
+H\"older's inequality and Jordan's lemma bound the quantum value by $(4\sqrt2+2)/3$, while the noise contributes
+$\pm\frac29$, so these facets hold for $v\le4/(3\sqrt2+1)=0.762974\ldots$. Part~(3) is Lemma~\ref{lem:witness} and
+Proposition~\ref{prop:flagmodel} with $d=3$.
+\end{proof}
+
+\begin{remark}[unused outcomes; scope]\label{rem:scope}
+$C_d$ leaves $d-2$ outcomes unused, while $p_0$ gives each of them probability $1/d$. On $\Phi_d$ a PVM whose $d$
+outcomes all occur is rank-one, and then $p_0$ is the white noise of reading~(c); so a projective counterexample on
+$\Phi_d$ using every outcome would settle reading~(c), which is open for $d\ge4$ (numerically, DKZ is optimal for
+$d\le8$: see ref.~\cite{GLZ} for $d\le5$ and the searches summarised in the repository; already for $d=4$ the polytope of
+link laws of covariant local behaviours, Masanes' polytope of correlation functions\cite{Masanes}, has facets that are
+not CGLMP inequalities). With POVMs every outcome can be used:
+the effects $(1-\varepsilon)P^x_a+\frac\varepsilon d\one$, $(1-\varepsilon)Q^y_b+\frac\varepsilon d\one$ with $(P,Q)=C_d$
+and $0<\varepsilon\le\frac1{100}$ are invertible and still beat DKZ for every $d\ge4$; and projective measurements on
+$\Phi_D$ with $D>d$ that use every outcome beat DKZ for $(d,D)=(4,12),(5,11),(6,12),(7,13),(8,12),(9,13)$.
+\end{remark}
+
+\emph{Prior work.} Ac\'{\i}n, Durt, Gisin and Latorre\cite{ADGL} found the value $\veven(d)$ (their eq.~(14)) for the
+CHSH strategy on a Schmidt-rank-two maximally entangled state in $\C^d\otimes\C^d$ with two-outcome measurements, and
+concluded that resistance to noise is not a good measure of nonlocality; Gruca, Laskowski and \.Zukowski\cite{GLZ} found
+numerically that Schmidt-rank-two states are the most noise-robust ($d\le5$); Baek, Ryu and Lee\cite{BRL} observed by
+linear programming that merged-outcome strategies beat DKZ on $\Phi_4$ and $\Phi_{16}$ under uniform noise (robustness
+$0.448$ versus $0.552$ for $d=4$), without relating this to Problem~27. The DKZ thresholds $2/\IME(d)$ were computed
+numerically in refs.~\cite{KGZMZ,DKZ,CGLMP,GLZ}, and analytically for $d=3$ in ref.~\cite{Chen01}. As far as we found,
+the exact theorem for every $d\ge4$ on $\Phi_d$, the exact threshold of $C_d$ in the $d$-outcome scenario, the rigorous
+lower bounds for $\DKZ_d$ and the consequence for Problem~27 are new.
+
+\subsection{The Kullback--Leibler clause}
+For a distribution $\sigma$ on the setting pairs let
+$U_q(\sigma)=\inf_{p\in\cL_d}\sum_{x,y}\sigma_{xy}D(q(\cdot,\cdot|x,y)\|p(\cdot,\cdot|x,y))$ (in bits); the statistical
+strengths of van Dam, Gill and Gr\"unwald\cite{vDGG} are $S^{\mathrm{UNI}}(q)=U_q(\frac14)$, $S^{\mathrm{UC}}(q)$ (supremum over
+product $\sigma$) and $S^{\mathrm{COR}}(q)$ (supremum over all $\sigma$). For $d=4k+\rho$ ($k\ge1$, $\rho\in\{0,1,2,3\}$)
+let $B_d$ be the strategy on $\Phi_d$ that uses, on consecutive coordinate blocks with disjoint outcome groups, $k$
+copies of two CHSH strategies with shared settings (product bases of the eigenvectors of $\mathsf A_x$, resp.
+$\mathsf B_y$, outcome $2a_1+a_2$) and one block of size $\rho$ (a single basis vector, the CHSH bases, or the DKZ bases
+for $d=3$). Its four measurements are orthonormal bases of $\C^d$.
+
+\begin{theorem}[computer-assisted]\label{thm:kl}
+For every $d\ge4$ and $X\in\{\mathrm{UNI},\mathrm{UC},\mathrm{COR}\}$,
+\[
+S^X(\DKZ_d)\le0.0687802606<0.0703203697\le S^{\mathrm{UNI}}(B_d)\le S^X(B_d),
+\]
+and $S^{\mathrm{UNI}}(B_d)\ge0.0879004622$ if $4\mid d$. The same holds on $\Phi_{kd}$ for $\DKZ_d\otimes\one_k$ and
+$B_d\otimes\one_k$.
+\end{theorem}
+
+\begin{proof}[Sketch of proof]
+\emph{Test factors.} If $r\ge0$ is positive on the support of $q$ and $\sum_{x,y}\sigma_{xy}r(a_x,b_y|x,y)\le1$ for every
+$\lambda$, Jensen's inequality gives $U_q(\sigma)\ge\sum_{x,y}\sigma_{xy}\sum_{a,b}q\log r$. \emph{Competitor.} The
+behaviour of $B_d$ is the mixture $\sum_j\frac{m_j}dq_j$ of its block behaviours, supported on disjoint outcome sets.
+For uniform $\sigma$, block test factors with entries at most $2$ add: a deterministic $\lambda$ either has all its
+contributing pairs of settings in one block, or exactly two diagonal pairs in two blocks, contributing at most
+$\frac14(2+2)=1$. Exact rational test factors (entries at most $1.24801$, feasibility checked by exhaustive enumeration)
+certify the block values $0$, $0.046273845411$, $0.057783024051$ and $L_4=0.087900462237$ bits; the resulting bound
+$(4kL_4+\rho L_\rho)/d$ is nondecreasing in $k$ and at least $\frac45L_4\ge0.0703203697$. \emph{DKZ.} By the partial
+fraction expansion of $\pi^2/\sin^2(\pi z)$, $h_{xy}$ is the reduction modulo $d$ of the distribution
+$h^\infty_{xy}(m)=1/(2\pi^2(m-\delta_{xy})^2)$ on $\Z$. A distribution $\mu$ of $(t,n_1,n_2)\in\Z^3$ defines, with a
+uniform shift $c$, the local model $A_1=c$, $A_2=c+t$, $B_1=c+n_1$, $B_2=c+n_2$ modulo $d$, and data processing gives
+$S^{\mathrm{UNI}}(\DKZ_d)\le T(\mu)=\frac14\sum_{x,y}D(h^\infty_{xy}\|\mu_{xy})$ for every $d$, where $\mu_{xy}$ are the
+laws of $n_1,n_2,n_1-t,n_2-t$. An explicit rational $\mu^*$ with tail $\propto1/(t^2-\frac14)$ gives
+$T(\mu^*)\le0.068780260568$ (interval arithmetic for $|m|\le3000$; nonpositive terms beyond). Two relabellings fix
+$p_{\DKZ}$ and generate a group that acts transitively on the setting pairs, so by concavity of $\sigma\mapsto U_q(\sigma)$,
+$S^{\mathrm{UNI}}=S^{\mathrm{UC}}=S^{\mathrm{COR}}$ for $\DKZ_d$.
+\end{proof}
+
+Moreover $S(\DKZ_d)\le S(\DKZ_{kd})$, and $0.0687464\le\sup_dS(\DKZ_d)\le0.0687711$. For $d=3$, $\DKZ_3$ is a strict
+local maximiser of all three strengths among projective strategies on $\Phi_3$, modulo phases and local unitaries
+$u\otimes\bar u$ (computer-assisted: exact Karush--Kuhn--Tucker data in $\Q(\sqrt3)$, with an optimal test factor that is
+affine in the CGLMP level, and an interval Cholesky certificate for the averaged Hessian), with
+$S(\DKZ_3)=0.05778302549332865$ bits; global optimality at $d=3$ is supported numerically but open. The clause was
+first shown to fail for $d=4$ by Zhang\cite{Zhang}, with an exact certificate, and for $4\le d\le9$ in our earlier
+work\cite{repo}. Programs and certificates (\texttt{verify\_main.py}, \texttt{zcert.py}, \texttt{blocks\_cert.py},
+\texttt{d3\_cert.py}) are in \texttt{complete-resolution/kl-divergence/}.
+
+%==================================================================================================
 \section{Formal verification in Lean 4}\label{sec:lean}
 %==================================================================================================
 
@@ -822,7 +1089,7 @@ The formalisation has 96 files and about 33,000 lines; it is in the directory \t
 repository\cite{repoOQP}. No file uses \texttt{sorry}, \texttt{admit}, an \texttt{axiom} declaration or
 \texttt{native\_decide}, and \texttt{\#print axioms} reports, for every main theorem, only the three standard axioms
 \texttt{propext}, \texttt{Classical.choice} and \texttt{Quot.sound}. The main theorems (file \texttt{Main.lean} and the
-files it imports) are the following.
+files it imports, and the file \texttt{CglmpNoise.lean}, which imports \texttt{Main.lean}) are the following.
 
 \begin{center}
 \small
@@ -849,6 +1116,12 @@ Hilbert-transform rearrangement ($N=4d$, $|A|=|B|=d$) & none\\
 Section~\ref{sec:cone} re-evaluated by the Lean kernel in exact rational interval arithmetic & none\\
 \nolinkurl{OQP27.ConeCertificate.fullCheck_sound} & soundness of the certificate checker & none\\
 \nolinkurl{OQP27.dkz_cglmp} & the DKZ strategy attains $\IME(d)$, for every $d$ & none\\
+\nolinkurl{OQP27.cglmpOf_noisy}, \nolinkurl{OQP27.noisy_violation_iff} (\texttt{CglmpNoise.lean}) & uniform noise of
+weight $1-v$ multiplies $I_d$ by $v$; the CGLMP noise threshold of a strategy is $2/I_d$ & none\\
+\nolinkurl{OQP27.noisy_violation_imp_le_twenty}, \nolinkurl{OQP27.noisy_threshold_rigid_le_twenty} &
+Proposition~\ref{prop:cglmpnoise} for $2\le d\le20$ & none\\
+\nolinkurl{OQP27.noisy_violation_imp}, \nolinkurl{OQP27.noisy_threshold_rigid} & Proposition~\ref{prop:cglmpnoise} for
+every $d\ge2$ & CONE$_d$ for $d\ge21$ only\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -888,6 +1161,14 @@ argument (Sections~\ref{sec:reduction}, \ref{sec:cont}--\ref{sec:rigidity}): ver
 \item The alternative proof of Theorem~3 for $\mathrm{rank}\,B\le1$ (and hence for $\mathrm{corank}\,B\le3$ and all
 $M\le5$): verdict correct (no mathematical error; some expository gaps, none of which changes a
 statement).
+\item Theorem~\ref{thm:literal}, two independent verifications: verdict correct, no error and no gap. The first
+re-derived every step, recomputed the facets of $\cL_3$ independently, re-verified all eighteen certificates of
+Proposition~\ref{prop:dkzcert} in 200-bit interval arithmetic and ran eleven tamper tests on the verification program,
+all of which were detected; the second rebuilt the result from scratch, with its own certificates, and found the local
+model of Proposition~\ref{prop:flagmodel}.
+\item Theorem~\ref{thm:kl} and the statements on $d=3$ and on $\sup_dS(\DKZ_d)$: verdict correct, no error; the bound
+$T(\mu^*)\le0.068780260568$ was reproduced digit for digit and the local optimality at $d=3$ re-proved with a different
+chart and slice. The sharper bounds on $\sup_dS(\DKZ_d)$ come from this verification.
 \end{enumerate}
 
 \emph{Checks.} The following checks are not part of the proofs; they guard against errors in them. All scripts and
@@ -937,19 +1218,47 @@ certificate files directly: the LP certificates for $d\le200$, the single-run ce
 plotted values are the lower endpoints of the certified enclosures), and the box logs of the final run for $d\ge2001$.
 
 \begin{thebibliography}{99}
+\bibitem{ADGL} A. Ac\'{\i}n, T. Durt, N. Gisin and J. I. Latorre, Quantum nonlocality in two three-level systems, Phys.
+Rev. A \textbf{65} (2002), 052325.
+\bibitem{BRL} K. Baek, J. Ryu and J. Lee, Robustness measures for quantifying nonlocality, New J. Phys. \textbf{27}
+(2025), 053001.
 \bibitem{BMV} D. Bessis, P. Moussa and M. Villani, Monotonic converging variational approximations to the functional
 integrals in quantum statistical mechanics, J. Math. Phys. \textbf{16} (1975), 2318--2325.
+\bibitem{Chen01} J.-L. Chen, D. Kaszlikowski, L. C. Kwek, C. H. Oh and M. \.Zukowski, Entangled three-state systems
+violate local realism more strongly than qubits: an analytical proof, Phys. Rev. A \textbf{64} (2001), 052109.
+\bibitem{Tsirelson} B. S. Cirel'son, Quantum generalizations of Bell's inequality, Lett. Math. Phys. \textbf{4} (1980),
+93--100.
+\bibitem{CollinsGisin} D. Collins and N. Gisin, A relevant two qubit Bell inequality inequivalent to the CHSH
+inequality, J. Phys. A \textbf{37} (2004), 1775.
 \bibitem{CGLMP} D. Collins, N. Gisin, N. Linden, S. Massar and S. Popescu, Bell inequalities for arbitrarily
 high-dimensional systems, Phys. Rev. Lett. \textbf{88} (2002), 040404.
+\bibitem{DKZ} T. Durt, D. Kaszlikowski and M. \.Zukowski, Violations of local realism with quantum systems described
+by $N$-dimensional Hilbert spaces up to $N=16$, Phys. Rev. A \textbf{64} (2001), 024101.
 \bibitem{Eremenko} A. E. Eremenko, Herbert Stahl's proof of the BMV conjecture, Sb. Math. \textbf{206} (2015), 87--92.
+\bibitem{Fine} A. Fine, Hidden variables, joint probability, and the Bell inequalities, Phys. Rev. Lett. \textbf{48}
+(1982), 291--295.
+\bibitem{Gill} R. D. Gill, Better Bell inequalities (passion at a distance), IMS Lecture Notes--Monograph Series
+\textbf{55} (2007), 135--148; arXiv:math/0610115.
+\bibitem{GLZ} J. Gruca, W. Laskowski and M. \.Zukowski, Nonclassicality of pure two-qutrit entangled states, Phys. Rev.
+A \textbf{85} (2012), 022118.
 \bibitem{Hein} O. Hein\"avaara, Tracial joint spectral measures, preprint, arXiv:2310.03227 (2023).
 \bibitem{Hormander} L. H\"ormander, \emph{The Analysis of Linear Partial Differential Operators I}, 2nd edn,
 Springer, 1990.
+\bibitem{HiGHS} Q. Huangfu and J. A. J. Hall, Parallelizing the dual revised simplex method, Math. Program. Comput.
+\textbf{10} (2018), 119--142.
+\bibitem{OQP} IQOQI Vienna, Open Quantum Problems, Problem 27: The power of CGLMP inequalities; archived copy of 29
+October 2023:
+\url{https://web.archive.org/web/20231029013544/https://oqp.iqoqi.oeaw.ac.at/the-power-of-cglmp-inequalities}.
+\bibitem{KGZMZ} D. Kaszlikowski, P. Gnaci\'nski, M. \.Zukowski, W. Miklaszewski and A. Zeilinger, Violations of local
+realism by two entangled $N$-dimensional systems are stronger than for two qubits, Phys. Rev. Lett. \textbf{85} (2000),
+4418--4421.
 \bibitem{Kulpa} W. Kulpa, The Poincar\'e--Miranda theorem, Amer. Math. Monthly \textbf{104} (1997), 545--550.
 \bibitem{Lean} L. de Moura and S. Ullrich, The Lean 4 theorem prover and programming language, in: CADE 28, Lecture
 Notes in Comput. Sci. \textbf{12699}, Springer, 2021, 625--635.
 \bibitem{LS} E. H. Lieb and R. Seiringer, Equivalent forms of the Bessis--Moussa--Villani conjecture, J. Stat. Phys.
 \textbf{115} (2004), 185--190.
+\bibitem{Masanes} Ll. Masanes, Tight Bell inequality for $d$-outcome measurements correlations, Quantum Inf. Comput.
+\textbf{3} (2003), 345--358.
 \bibitem{Mathlib} The mathlib Community, The Lean mathematical library, in: Proc. 9th ACM SIGPLAN International
 Conference on Certified Programs and Proofs (CPP 2020), ACM, 2020, 367--381.
 \bibitem{classical} A. Mishra and A. Senthilkumar, A rearrangement inequality for the discrete Hilbert transform, with
@@ -959,7 +1268,12 @@ Tsirelson bounds, \url{https://github.com/anshM123/CGLMP} (2026).
 \bibitem{repoOQP} A. Mishra and A. Senthilkumar, IQOQI Vienna Open Problem 27B: proofs, CONE$_d$ certificates, Lean~4
 formalisation and independent verification, \url{https://github.com/anshM123/anshM123-IQOQI-Vienna-Open-Problem-27}
 (2026).
+\bibitem{PR} S. Popescu and D. Rohrlich, Quantum nonlocality as an axiom, Found. Phys. \textbf{24} (1994), 379--385.
 \bibitem{Stahl} H. R. Stahl, Proof of the BMV conjecture, Acta Math. \textbf{211} (2013), 255--290.
+\bibitem{vDGG} W. van Dam, R. D. Gill and P. D. Gr\"unwald, The statistical strength of nonlocality proofs, IEEE Trans.
+Inform. Theory \textbf{51} (2005), 2812--2835.
+\bibitem{Zhang} Y. Zhang, CGLMP measurements need not maximize statistical strength, Zenodo (2026),
+\url{https://doi.org/10.5281/zenodo.23022433}.
 \end{thebibliography}
 
 \end{document}

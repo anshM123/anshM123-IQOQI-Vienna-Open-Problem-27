@@ -66,7 +66,9 @@ The key new ingredient is a matrix inequality on a strip in the complex plane, w
 size by exhibiting an explicit positive density in a two-variable extension of Stahl's theorem, formerly the
 Bessis--Moussa--Villani conjecture. A computer-assisted certificate, checked in interval arithmetic, connects this
 inequality to the Bell problem for every $d$. For $d\le20$ the entire proof, including this certificate, is checked
-by the Lean theorem prover.
+by the Lean theorem prover. Together with earlier work on Part~A and our results on the two remaining clauses of
+Part~B, this completes the resolution of Problem~27 as originally posed; the verdict on its noise-resistance clause
+depends on how noise resistance is measured.
 \end{abstract}
 
 %==============================================================================================================
@@ -99,7 +101,8 @@ representation of Bessis, Moussa and Villani (BMV), which was conjectured in 197
 Stahl2013}. The argument has also been formalised in the Lean theorem prover\cite{Lean2021,Mathlib2020}. The formal
 proof is complete except for one input, the certificate for $d\ge21$. For $d\le20$ Lean checks the certificate
 as well, so for these $d$ the result is fully machine-checked. The matrix inequality and the positivity theorem behind
-it are formalised in full, for matrices of every size.
+it are formalised in full, for matrices of every size. We also settle the two remaining clauses of Part~B, on noise
+resistance and on Kullback--Leibler discrimination (Table~\ref{tab:status}).
 
 %==============================================================================================================
 \section*{The CGLMP inequality and the question}
@@ -477,39 +480,63 @@ rigidity that our exact certificates established for $3\le d\le20$\cite{repoCGLM
 independent.
 
 %==============================================================================================================
-\section*{The status of Open Quantum Problem 27B}
+\section*{The status of Open Quantum Problem 27}
 
-Part~B of Open Quantum Problem~27 asks to show that the DKZ measurements are necessarily optimal on maximally entangled
-states, that they give the highest resistance to noise, and that they are optimal for the Kullback--Leibler
-discrimination of quantum from local correlations\cite{OQP27}. The clauses go back to Gill's numerical
-observations\cite{Gill2007}. Table~\ref{tab:status} summarizes their status. Theorems~1 and~2 settle optimality and
-uniqueness for every $d$. The noise clause holds for every $d$ in the form that refers to the CGLMP inequality itself:
-mixing the correlations with uniform noise of weight $1-v$ multiplies $I_d$ by $v$, so the smallest visibility at which
-the CGLMP inequality detects nonlocality of a maximally entangled state is $2/\IME(d)$, and by Theorem~2 only the DKZ
-measurements reach it. Against all Bell inequalities the noise clause is proved only for $d=3$\cite{repoCGLMP}; for
-$d=4,5$ it holds numerically\cite{GLZ2012,repoCGLMP}. The Kullback--Leibler clause is false: for $4\le d\le9$ other measurements on the
-maximally entangled state give a strictly larger statistical strength\cite{vanDam2005} than the DKZ measurements. This
-was shown first for $d=4$ by Zhang\cite{Zhang2026} and for $4\le d\le9$ in our earlier work\cite{repoCGLMP}. When the
-state may also be chosen, the best tests use states that are not maximally entangled\cite{AGG2005}.
-Part~A of the problem was answered negatively by Bancal, Gisin and Pironio\cite{BGP2010}.
+Part~A of Open Quantum Problem~27 asked whether every facet of the local polytope is of CGLMP type; Bancal, Gisin and
+Pironio answered it negatively\cite{BGP2010}. Part~B asks to show that the DKZ measurements are necessarily optimal on
+maximally entangled states, that they give the highest resistance to noise, and that they are optimal for the
+Kullback--Leibler discrimination of quantum from local correlations\cite{OQP27}. The clauses go back to Gill's numerical
+observations\cite{Gill2007}. Table~\ref{tab:status} gives the verdict on each of them. Theorems~1 and~2 settle
+optimality and uniqueness for every $d$.
+
+The verdict on the noise clause depends on how noise resistance is measured. Mixing the correlations with uniformly
+random outcomes of weight $1-v$ multiplies $I_d$ by $v$, so the smallest visibility at which the CGLMP inequality
+detects nonlocality of a maximally entangled state is $2/\IME(d)$, and by Theorem~2 only the DKZ measurements reach it;
+this consequence is also checked in Lean. Gill, however, asked for the violation of local realism, that is, of any Bell
+inequality\cite{Gill2007}. In this literal reading the clause fails for every $d\ge4$ (Supplementary Information). A
+strategy that uses the optimal two-outcome CHSH measurements, and never produces the other $d-2$ outcomes, tolerates
+more noise than the DKZ measurements: the noise lands partly on the unused outcomes, and this helps the noisy
+correlations to violate a coarse-grained CHSH inequality. We determine its critical visibility exactly, for
+example $4(d-1)/((\sqrt2-1)d^2+4(d-1))$ for even $d$, and prove that the DKZ measurements need a higher one, with
+computer-assisted certificates for $4\le d\le9$ and an elementary bound for $d\ge10$. The effect itself was noticed
+before: Ac\'{\i}n, Durt, Gisin and Latorre found it for a two-qubit entangled state embedded in two qudits and concluded
+that resistance to noise is not a good measure of nonlocality\cite{ADGL2002}, and Baek, Ryu and Lee observed it
+numerically on maximally entangled states of local dimension 4 and 16\cite{BaekRyuLee2025}. As far as we found, the
+general theorem and its bearing on Problem~27 are new. For $d=2$ the clause holds, and for $d=3$ it holds on $\Phi_3$
+but fails on $\Phi_2$. The counterexample needs unused outcomes; whether DKZ is optimal when the noise acts on the state
+and every outcome is used remains open; numerical searches support it for $d\le8$ (ref.~\citenum{GLZ2012} and
+Supplementary Information).
+
+The Kullback--Leibler clause\cite{vanDam2005} is false for every $d\ge4$: an explicit strategy built from pairs of CHSH
+measurements has a statistical strength of at least $0.0703204$ bits, while that of the DKZ measurements is at most
+$0.0687803$ bits in every dimension. Zhang found the first counterexample, for $d=4$\cite{Zhang2026}, and we gave
+counterexamples for $4\le d\le9$ in earlier work\cite{repoCGLMP}. For $d=3$ the DKZ measurements are a strict local
+maximum of the statistical strength; whether they are the global maximum is open. When the state may also be chosen,
+the best tests use states that are not maximally entangled\cite{AGG2005}.
 
 \begin{table}[t]
 \centering\small
-\caption{\textbf{Status of Open Quantum Problem 27B.} ``Max-ent'' refers to maximally entangled states of any local
-dimension; all statements concern projective measurements.}
+\caption{\textbf{Status of Open Quantum Problem 27.} ``Max-ent'' refers to maximally entangled states of any local
+dimension. The positive statements concern projective measurements; the counterexamples use projective measurements.}
 \label{tab:status}
 \begin{tabular}{>{\raggedright\arraybackslash}p{5.3cm}>{\raggedright\arraybackslash}p{9.6cm}}
 \toprule
 clause & status\\
 \midrule
-DKZ optimal on max-ent states & proved for every $d$ (Theorem~1), with a computer-assisted step for $d\ge21$; fully
+27A: all facets of the local polytope of CGLMP type & false\cite{BGP2010}\\
+27B: DKZ optimal on max-ent states & proved for every $d$ (Theorem~1), with a computer-assisted step for $d\ge21$; fully
 formalised in Lean for $d\le20$; earlier: $3\le d\le20$ and the commuting case for every
 $d$\cite{repoCGLMP,classical2026}\\
-DKZ unique (rigidity) & proved for every $d$ (Theorem~2), with the same computer-assisted step for $d\ge21$; fully
+27B: DKZ unique (rigidity) & proved for every $d$ (Theorem~2), with the same computer-assisted step for $d\ge21$; fully
 formalised in Lean for $d\le20$; earlier: $3\le d\le20$\cite{repoCGLMP}\\
-highest noise resistance & CGLMP witness: every $d$ (Theorems~1 and~2); all Bell inequalities: $d=3$ proved, $d=4,5$
-numerical\cite{GLZ2012,repoCGLMP}\\
-optimal Kullback--Leibler discrimination & false for $4\le d\le9$\cite{Zhang2026,repoCGLMP}\\
+27B: highest noise resistance, CGLMP inequality, uniformly random outcomes as noise & true for every $d$, DKZ the
+unique optimum (Theorems~1 and~2; formalised in Lean with the same scope)\\
+27B: highest noise resistance, all Bell inequalities, uniformly random outcomes as noise (Gill's reading) & false for
+every $d\ge4$ (Supplementary Information); true for $d=2$; $d=3$: true on $\Phi_3$, false on $\Phi_2$\\
+strengthening: white noise on the state, every outcome used & open for $d\ge4$; DKZ optimal in numerical searches for
+$d\le8$\\
+27B: optimal Kullback--Leibler discrimination & false for every $d\ge4$ (Supplementary Information; $d=4$ first in
+ref.~\citenum{Zhang2026}); $d=3$: DKZ a strict local maximum\\
 maximal value over all states & exact for $3\le d\le8$\cite{IoannouRosset2021,repoCGLMP}; open for $d\ge9$\\
 \bottomrule
 \end{tabular}
@@ -521,7 +548,9 @@ maximal value over all states & exact for $3\le d\le8$\cite{IoannouRosset2021,re
 We have shown that the DKZ measurements are the optimal and essentially unique projective measurements for the CGLMP
 inequality on maximally entangled states, in every dimension. This settles the clause of IQOQI Open Quantum Problem~27B
 that asks for necessity on maximally entangled states, which had been supported by numerics for more than two decades.
-The proof uses a computer only for the certificate CONE$_d$, in interval arithmetic, and for $d\le20$ it is checked in
+Together with the negative answer to Part~A\cite{BGP2010} and our verdicts on the noise and Kullback--Leibler clauses
+(Table~\ref{tab:status}), this completes the resolution of Open Quantum Problem~27 as originally posed, with the verdict
+on the noise clause depending on its reading. The proof uses a computer only for the certificate CONE$_d$, in interval arithmetic, and for $d\le20$ it is checked in
 full by the Lean theorem prover. An analytic proof of CONE$_d$ would remove the computer-assisted step and, once
 formalised, complete the formal proof for every $d$.
 For experiments, Theorem~1 provides the exact benchmark $\IME(d)$ for maximally entangled sources of every dimension.
@@ -533,13 +562,13 @@ non-negative slack terms, and Theorem~4 expresses each defect as an integral of 
 in the commuting case. Such a bound is what applications to randomness
 certification and robust self-testing would require\cite{SupicBowles2020,Pironio2010}.
 
-Two questions remain. The first concerns general measurements. Our statements cover projective measurements, which is
-the setting of the original question. A general measurement on $\Phi_D$ can be realized as a projective measurement on
-a larger space, but the enlarged state is then no longer maximally entangled, so the extension is not automatic. The
+Three questions remain. The first concerns general measurements. Our statements cover projective measurements, which
+is the setting of the original question. A general measurement on $\Phi_D$ can be realized as a projective measurement
+on a larger space, but the enlarged state is then no longer maximally entangled, so the extension is not automatic. The
 second concerns the optimal state. The maximal CGLMP value over all states is attained by states that are not maximally
 entangled\cite{ADGL2002}, and it is known exactly only for $d\le8$. Our reduction extends to every pure state as a
 clock model with site-dependent weights (we do not give the details here). Whether the cone method extends to it is
-open.
+open. The third is the noise clause with white noise on the state and every outcome used, which is open for $d\ge4$.
 
 The mathematical tools may be useful beyond Bell inequalities. The strip inequality is a majorization principle for
 non-normal matrices whose real part is a projection. It connects the eigenvalues of $B+ig$ with the spectrum of a
@@ -750,7 +779,8 @@ correct (no mathematical error; some expository gaps, none of which changes a st
 produced them, in all three regimes the rigorous computations agree with independent floating-point computations, and
 the rigidity chain was tested numerically on step fields and random non-commuting configurations. For $3\le d\le20$,
 Theorems~1 and~2 were proved earlier by exact sum-of-squares certificates that use neither Theorem~3 nor
-CONE$_d$\cite{repoCGLMP}.
+CONE$_d$\cite{repoCGLMP}. The results on the remaining clauses were checked in the same way: the theorem on the
+literal noise clause by two independent checkers, and the Kullback--Leibler theorem by one; no error was found.
 
 \subsection*{Formal verification}
 The argument is formalised in the Lean~4 theorem prover (version 4.33.1) with its mathematical library Mathlib
@@ -774,23 +804,50 @@ machine-checked for $2\le d\le20$, and for $d\ge21$ the formal proof is complete
 which is established by the interval-arithmetic certificates described above, outside Lean. In Lean, CONE$_d$ is stated
 as a finite positive combination of cell vectors that includes a cell vector with all cells positive; for $d\ge201$ this
 finite form follows from the integral form produced by the certificates by Carath\'eodory's theorem, the trivial
-directions being realized by cells supported on two residues.
+directions being realized by cells supported on two residues. The consequence for the CGLMP noise threshold
+(Table~\ref{tab:status}) is formalised in a further file, \texttt{CglmpNoise.lean}, with the same assumptions as
+Theorems~1 and~2 and the same three axioms.
+
+\subsection*{The noise and Kullback--Leibler clauses}
+Let $u(a,b|x,y)=d^{-2}$ be the behaviour of uniformly random outcomes, and let $v_{\rm c}(p)$ be the largest $v$ for
+which $vp+(1-v)u$ is local. For even $d$ the competitor measures the optimal CHSH observables on the factor $\C^2$ of
+$\Phi_d=\Phi_2\otimes\Phi_{d/2}$ and records their two outcomes as $0$ and $1$; for odd $d$ a block construction adds
+one dimension with the fixed outcome $0$. Coarse-graining every measurement into the outcome $0$ and the rest gives a
+CHSH inequality that is violated exactly for $v>4(d-1)/((\sqrt2-1)d^2+4(d-1))$ (even $d$), respectively
+$v>4/((\sqrt2-1)d+4)$ (odd $d$), and an explicit local model shows that the noisy behaviour is local at the threshold.
+For the DKZ measurements, every behaviour with uniform marginals is local at $v=\frac12$, which settles $d\ge10$; for
+$4\le d\le9$, exact rational local models, verified with rigorous enclosures of the trigonometric probabilities, give
+$v_{\rm c}\ge0.69$, $0.687$, $0.684$, $0.683$, $0.682$, $0.681$, above the values of the competitor. The thresholds
+$2/\IME(d)$ of the DKZ measurements were known numerically\cite{KGZMZ2000,DKZ2001,CGLMP2002,GLZ2012}, and analytically
+for $d=3$\cite{Chen2001}. For the Kullback--Leibler clause the competitor combines copies of the CHSH strategy, and of
+the DKZ strategy for $d=3$, on blocks with disjoint outcomes, and the bound for the DKZ measurements uses that their
+correlations for every $d$ are the reduction modulo $d$ of one probability distribution on the integers. Statements,
+proofs, certificates and the reports of the independent verifications are in the Supplementary Information and the
+repository\cite{repoOQP27}.
 
 \subsection*{Scope}
 All statements concern projective measurements on maximally entangled states $\Phi_D$ of finite dimension $D$. Positive
 operator-valued measurements are not covered. The clock-model reduction extends to all pure states (we do not give
-the details here), but the cone method has not been applied there.
+the details here), but the cone method has not been applied there. The counterexamples to the noise and
+Kullback--Leibler clauses use projective measurements on $\Phi_d$; the one for the noise clause has unused outcomes, and
+a variant with positive operator-valued measurements in which every outcome occurs also beats DKZ (Supplementary
+Information).
 
 \section*{Data availability}
 The certificate files for CONE$_d$ in all three regimes, the audit and verification logs, and all data shown in the
 figures are available at \url{https://github.com/anshM123/anshM123-IQOQI-Vienna-Open-Problem-27} (ref.~\citenum{repoOQP27}).
+The certificates for the noise and Kullback--Leibler clauses and the clause-by-clause ledger of Problem~27 are in its
+directory \texttt{complete-resolution/}.
 The exact sum-of-squares certificates of our earlier work for $3\le d\le20$ are available at
 \url{https://github.com/anshM123/CGLMP} (ref.~\citenum{repoCGLMP}).
 
 \section*{Code availability}
 The certificate generators and checkers for CONE$_d$, the audit scripts, the Lean~4 formalisation, the independent
 verification reports with their numerical checks, and the script that produces Figs.~1--5 are available at
-\url{https://github.com/anshM123/anshM123-IQOQI-Vienna-Open-Problem-27} (ref.~\citenum{repoOQP27}).
+\url{https://github.com/anshM123/anshM123-IQOQI-Vienna-Open-Problem-27} (ref.~\citenum{repoOQP27}). The verification
+programs for the noise and Kullback--Leibler clauses are in its directory \texttt{complete-resolution/} (subdirectories
+\texttt{noise-literal/} and \texttt{kl-divergence/}), and the Lean file for the CGLMP noise threshold is
+\texttt{lean/OQP27/CglmpNoise.lean}.
 
 \bibliographystyle{unsrt}
 {\small\singlespacing
@@ -811,8 +868,8 @@ The authors declare no competing interests.
 \section*{Additional information}
 \textbf{Supplementary Information} is available for this paper. It contains complete proofs of Theorems~3 and~4 and
 an outline of their elementary proof, the precise statements of the reduction, the continuum theorem, the cell
-inequalities and the rigidity argument, the inventory of certificates, the list of the main Lean theorems, and the
-independent verifications and checks.
+inequalities and the rigidity argument, the inventory of certificates, the theorems on the noise and Kullback--Leibler
+clauses with their proofs, the list of the main Lean theorems, and the independent verifications and checks.
 \textbf{Correspondence and requests for materials} should be addressed to Ansh Mishra
 (\href{mailto:ansh.mishra2025@gmail.com}{ansh.mishra2025@gmail.com}).
 

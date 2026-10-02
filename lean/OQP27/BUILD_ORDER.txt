@@ -94,3 +94,5 @@ StripLaplace
 StripAxiomsL3a
 StripRIChain
 StripAxiomsL3b
+CglmpNoise
+CglmpNoiseAxioms

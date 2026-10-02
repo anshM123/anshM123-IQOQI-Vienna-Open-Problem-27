@@ -1,12 +1,18 @@
-# IQOQI Vienna Open Problem 27B: the DKZ measurements are optimal and unique for CGLMP on maximally entangled states, in every dimension
+# IQOQI Vienna Open Problem 27: a complete resolution
+
+The DKZ measurements are optimal and unique for CGLMP on maximally entangled states in every dimension, and every
+remaining clause of the problem as posed is settled.
 
 **Authors:** Ansh Mishra, Aryan Senthilkumar. **License:** MIT.
 
-This repository contains our solution of the maximally entangled clause of Part B of IQOQI Vienna Open Quantum Problem 27,
+This repository completes the resolution of IQOQI Vienna Open Quantum Problem 27,
 [*The power of CGLMP inequalities*](https://oqp.iqoqi.oeaw.ac.at/the-power-of-cglmp-inequalities)
-([archived copy](http://web.archive.org/web/20231029013544/https://oqp.iqoqi.oeaw.ac.at/the-power-of-cglmp-inequalities)).
-The proofs, the computer-assisted certificates and the independent checks are all included, together with a Lean 4
-formalisation of the argument.
+([archived copy](http://web.archive.org/web/20231029013544/https://oqp.iqoqi.oeaw.ac.at/the-power-of-cglmp-inequalities)),
+as originally posed. Part A was answered by Bancal, Gisin and Pironio in 2010. For Part B we prove the central clause
+(the DKZ measurements are necessarily the optimal ones, in every dimension) and settle its two remaining clauses: noise
+resistance and Kullback–Leibler discrimination. The proofs, the computer-assisted certificates, the independent
+verifications and a Lean 4 formalisation are all included. The clause-by-clause verdicts are in
+[`complete-resolution/LEDGER.md`](complete-resolution/LEDGER.md).
 
 ## In one paragraph
 
@@ -23,9 +29,9 @@ up to a local change of basis and an inert auxiliary system.**
 
 | | |
 |---|---|
-| [`papers/overview/main.pdf`](papers/overview/main.pdf) | the article: the problem, the result and the ideas, with figures, written for a general physics audience (20 pages) |
-| [`papers/overview/SI.pdf`](papers/overview/SI.pdf) | Supplementary Information to the article (16 pages) |
-| [`papers/math/main.pdf`](papers/math/main.pdf) | the complete mathematical paper with all proofs (40 pages) |
+| [`papers/overview/main.pdf`](papers/overview/main.pdf) | the article: the problem, the result and the ideas, with figures, written for a general physics audience (21 pages) |
+| [`papers/overview/SI.pdf`](papers/overview/SI.pdf) | Supplementary Information to the article (21 pages) |
+| [`papers/math/main.pdf`](papers/math/main.pdf) | the complete mathematical paper with all proofs (51 pages) |
 
 ## Main results
 
@@ -49,16 +55,22 @@ Theorems 3 and 4 are proved analytically; Theorems 1 and 2 use them together wit
 
 ## Status of OQP 27 after this work
 
-| Clause | Status |
-|---|---|
-| 27A: are all facets of the (2,2,d) local polytope of CGLMP type? | answered negatively by Bancal, Gisin and Pironio, J. Phys. A 43, 385303 (2010) |
-| 27B: DKZ optimal on maximally entangled states | **proved for every d** (projective measurements), this repository |
-| 27B: DKZ unique (necessarily optimal) | **proved for every d**, this repository |
-| 27B: Tsirelson bound over all states | exact values known only for d = 3, 4 (Ioannou–Rosset) and d = 5..8 (our earlier repository [CGLMP](https://github.com/anshM123/CGLMP)) |
-| 27B: best Kullback–Leibler discrimination | **false** for d = 4..9 (d = 4 first by Y. Zhang, Zenodo 2026, doi:10.5281/zenodo.23022433; d = 5..9 in [CGLMP](https://github.com/anshM123/CGLMP)) |
-| 27B: highest noise resistance | for the CGLMP witness, it follows from Theorem 1 for every d; against all Bell inequalities only for d = 3 |
+| Clause (as posed) | Verdict | Where |
+|---|---|---|
+| 27A: are all facets of the (2,2,d) local polytope of CGLMP type? | **no** | Bancal, Gisin, Pironio, J. Phys. A 43, 385303 (2010) (prior work) |
+| 27B: the DKZ measurements are necessarily the optimal ones on maximally entangled states | **true for every d** (optimal and unique; projective measurements, any local dimension) | Theorems 1 and 2, `papers/`, `lean/` |
+| 27B: they give the highest resistance of the violation to noise | **depends on the reading.** Resistance of the *CGLMP* violation: **true for every d**, DKZ the unique optimum. Gill's literal reading (uniform random outcomes, violation of *local realism*): **false for every d ≥ 4** | `complete-resolution/noise-cglmp/` (Lean-verified), `complete-resolution/noise-literal/` (exact theorem, two independent verifications) |
+| 27B: they give the best Kullback–Leibler discrimination | **false for every d ≥ 4** | `complete-resolution/kl-divergence/` (d = 4 first by Y. Zhang, Zenodo 2026, doi:10.5281/zenodo.23022433) |
 
-Scope: projective measurements (PVMs). General POVMs are not covered.
+For the literal noise clause, the effect behind the counterexample was observed before: Acín, Durt, Gisin and Latorre,
+PRA 65, 052325 (2002), eq. (14), and numerically Baek, Ryu and Lee, New J. Phys. 27, 053001 (2025). As far as we found,
+the exact theorem for every d ≥ 4 and its connection to Problem 27 are new.
+
+Questions that go beyond the problem as posed remain open, and we do not claim them: optimality for general POVMs; noise
+resistance against all Bell inequalities with white noise on the state (DKZ is optimal in all our numerical searches up to
+d = 8, and d = 3 is proved); and the CGLMP maximum over all states for d ≥ 9 (exact for d ≤ 8).
+
+Scope of Theorems 1 and 2: projective measurements (PVMs), as in the problem's "observables". General POVMs are not covered.
 
 ## How the proof fits together
 
@@ -77,7 +89,7 @@ Scope: projective measurements (PVMs). General POVMs are not covered.
 
 ### Formal verification in Lean 4
 
-[`lean/`](lean/) contains a Lean 4 formalisation of the whole argument, built on Mathlib: 96 files, about 33,000 lines,
+[`lean/`](lean/) contains a Lean 4 formalisation of the whole argument, built on Mathlib: 98 files, about 33,400 lines,
 plus three files of algebraic rigidity from our earlier repository. It states the problem exactly (concrete matrices,
 projective measurements, the CGLMP expression term by term) and proves it. Each main theorem below depends only on Lean's
 three standard axioms (`propext`, `Classical.choice`, `Quot.sound`). The code contains no `sorry`, `admit`, `axiom` or
@@ -97,6 +109,8 @@ file is logged in `lean/OQP27/logs/fullbuild/`, and `bash check.sh` in `lean/` r
 | `OQP27.coneCertPos_le_twenty` | CONE_d for 2 ≤ d ≤ 20, with certificates re-evaluated by the Lean kernel | **none** |
 | `OQP27.ConeCertificate.fullCheck_sound` | soundness of the certificate checker used for those cases | **none** |
 | `OQP27.dkz_cglmp` | the DKZ strategy attains I_ME(d) for every d | **none** |
+| `OQP27.cglmpOf_noisy`, `OQP27.noisy_violation_iff` | mixing with uniform noise at visibility v multiplies the CGLMP value by v; the CGLMP noise threshold of a strategy is 2/I_d | **none** |
+| `OQP27.noisy_violation_imp_le_twenty`, `OQP27.noisy_violation_imp` | noise clause, CGLMP reading: no strategy has a lower CGLMP noise threshold than DKZ (2/I_ME(d)) | none for d ≤ 20; CONE_d for d ≥ 21 |
 
 So, for 2 ≤ d ≤ 20, the maximally entangled clause of OQP 27B is fully machine-checked. For d ≥ 21 the Lean proof is complete
 except for one input, the cone condition, which is established by interval-arithmetic certificates (next section).
@@ -138,6 +152,7 @@ are kept next to the proofs:
 |---|---|
 | `papers/overview/` | the article (`main.pdf`), its Supplementary Information (`SI.pdf`), LaTeX sources, figure scripts |
 | `papers/math/` | the mathematical paper (`main.pdf`) and its LaTeX source |
+| `complete-resolution/` | the clause-by-clause ledger (`LEDGER.md`) and the theorems settling the noise and Kullback–Leibler clauses, with verifiers, certificates and independent verification reports |
 | `lean/` | the Lean 4 formalisation (`OQP27/*.lean`, `CGLMPRigidity/*.lean`), `check.sh`, axiom audits, build logs, module reports |
 | `cone-certificates/` | CONE_d certificates, interval-arithmetic checkers, audits, logs, and the write-ups `CONE_PROOF.md`, `CONE_ALLD_PROOF.md`, `RIGOR_GAUSS.md`, `RIGOR_ALLD.md` |
 | `proofs/strip-inequality/` | proof of Theorems 3 and 4 (Fourier-slice route), independent verification report, numerical checks |
